@@ -1,6 +1,6 @@
 import client from "../database";
 
-export type Product {
+export type Product = {
     id: Number;
     name: string;
     price: Number;
