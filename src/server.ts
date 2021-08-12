@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express'
-//import bodyParser from 'body-parser'
 import prod_routes from './handlers/product_routes'
 
 const app: express.Application = express()

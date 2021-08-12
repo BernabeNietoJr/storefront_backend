@@ -12,4 +12,20 @@ describe('Book Model', () => {
         expect(productStore.show).toBeDefined();
     });
 
+    it('create method should add a product', async () => {
+        const result = await productStore.create({
+            id: 1,
+            name: "Soy Sauce",
+            price: 1.75,
+            category: "Condiment"
+        });
+
+        expect(result).toEqual({
+            id: 1,
+            name: "Soy Sauce",
+            price: 1.75,
+            category: "Condiment"
+        })
+    });
+
 });
