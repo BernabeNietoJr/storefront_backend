@@ -1,7 +1,7 @@
 import client from "../database";
 
 export type Product = {
-    id: Number;
+    id ?: Number;
     name: string;
     price: Number;
     category: string;
@@ -47,11 +47,12 @@ export class StoreProduct {
 
     async create(prod: Product): Promise<Product> {
         try {
-            const sql = 'INSERT INTO product (id, name, price, category) VALUES($1, $2, $3, $4) RETURNING *';
+            
+            const sql = 'INSERT INTO product ( name, price, category) VALUES($1, $2, $3) RETURNING *';
 
             const conn = await client.connect();
 
-            const result = await conn.query(sql, [prod.id, prod.name, prod.price, prod.category]);
+            const result = await conn.query(sql, [prod.name, prod.price, prod.category]);
 
             const product = result.rows[0];
 
@@ -60,8 +61,30 @@ export class StoreProduct {
             return product;
 
         } catch (err) {
-            throw new Error(`Could not add new product ${prod.name}. Error ${err}`);
+            throw new Error(`Could not create new product ${prod.name}. Error ${err}`);
         }
     }
+
+    async deleteAll(): Promise<Product[]> {
+
+        try {
+            const deleteSql = 'DELETE FROM product WHERE id != null';
+
+            const conn = await client.connect();
+
+            const result = await conn.query(deleteSql);
+
+            const product = result.rows;
+
+            conn.release();
+
+            return product;
+
+        }
+        catch (err) {
+            throw new Error(`Could not delete all products.  ${err}`);
+        }
+        
+    }    
 
 }
