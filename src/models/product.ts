@@ -1,4 +1,5 @@
-import client from "../database";
+import client from '../database';
+import jwt from 'jsonwebtoken';
 
 export type Product = {
     id ?: Number;
@@ -14,7 +15,7 @@ export class StoreProduct {
         try {
 
             const conn = await client.connect();
-            const sql = 'SELECT * FROM product';
+            const sql = 'SELECT * FROM products';
             const result = await  conn.query(sql);
 
             conn.release();
@@ -27,10 +28,10 @@ export class StoreProduct {
         }
     }
 
-    async show(id: string): Promise<Product> {
+    async show(id: Number): Promise<Product> {
 
         try {
-            const sql = 'SELECT * FROM product WHERE id =($1)';
+            const sql = 'SELECT * FROM products WHERE id =($1)';
 
             const conn = await client.connect();
             const result = await conn.query(sql, [id]);
@@ -48,7 +49,7 @@ export class StoreProduct {
     async create(prod: Product): Promise<Product> {
         try {
             
-            const sql = 'INSERT INTO product ( name, price, category) VALUES($1, $2, $3) RETURNING *';
+            const sql = 'INSERT INTO products ( name, price, category) VALUES($1, $2, $3) RETURNING *';
 
             const conn = await client.connect();
 
@@ -68,7 +69,7 @@ export class StoreProduct {
     async deleteAll(): Promise<Product[]> {
 
         try {
-            const deleteSql = 'DELETE FROM product WHERE id != null';
+            const deleteSql = 'DELETE FROM products WHERE id > 0';
 
             const conn = await client.connect();
 
@@ -85,6 +86,28 @@ export class StoreProduct {
             throw new Error(`Could not delete all products.  ${err}`);
         }
         
-    }    
+    }  
 
+    async getNewlyInsertedProductId(): Promise<Product> {
+
+        try {
+            
+            const sql = "SELECT CURRVAL(pg_get_serial_sequence('id')) ";
+
+            const conn = await client.connect();
+
+            const result = await conn.query(sql);
+
+            const product = result.rows;
+
+            conn.release();
+            
+            return product[0];
+
+        } catch (err) {
+            throw new Error(`Could not get newly inserted Product. ${err}`);
+        }
+    
+    }
+    
 }

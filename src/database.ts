@@ -3,12 +3,15 @@ import { Pool } from 'pg'
 
 dotenv.config()
 
+
 const  { 
     POSTGRES_HOST,
     POSTGRES_DB,
     POSTGRES_TEST_DB,
     POSTGRES_USER,
     POSTGRES_PASSWORD,
+    SALT_ROUNDS=10,
+    BCRYPT_PASSWORD,
     ENV,
 } = process.env
 

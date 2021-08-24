@@ -54,7 +54,7 @@ var StoreProduct = /** @class */ (function () {
                         return [4 /*yield*/, database_1["default"].connect()];
                     case 1:
                         conn = _a.sent();
-                        sql = 'SELECT * FROM product';
+                        sql = 'SELECT * FROM products';
                         return [4 /*yield*/, conn.query(sql)];
                     case 2:
                         result = _a.sent();
@@ -75,7 +75,7 @@ var StoreProduct = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        sql = 'SELECT * FROM product WHERE id =($1)';
+                        sql = 'SELECT * FROM products WHERE id =($1)';
                         return [4 /*yield*/, database_1["default"].connect()];
                     case 1:
                         conn = _a.sent();
@@ -99,11 +99,11 @@ var StoreProduct = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        sql = 'INSERT INTO product (id, name, price, category) VALUES($1, $2, $3, $4) RETURNING *';
+                        sql = 'INSERT INTO products ( name, price, category) VALUES($1, $2, $3) RETURNING *';
                         return [4 /*yield*/, database_1["default"].connect()];
                     case 1:
                         conn = _a.sent();
-                        return [4 /*yield*/, conn.query(sql, [prod.id, prod.name, prod.price, prod.category])];
+                        return [4 /*yield*/, conn.query(sql, [prod.name, prod.price, prod.category])];
                     case 2:
                         result = _a.sent();
                         product = result.rows[0];
@@ -111,7 +111,57 @@ var StoreProduct = /** @class */ (function () {
                         return [2 /*return*/, product];
                     case 3:
                         err_3 = _a.sent();
-                        throw new Error("Could not add new product " + prod.name + ". Error " + err_3);
+                        throw new Error("Could not create new product " + prod.name + ". Error " + err_3);
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    StoreProduct.prototype.deleteAll = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var deleteSql, conn, result, product, err_4;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        deleteSql = 'DELETE FROM products WHERE id > 0';
+                        return [4 /*yield*/, database_1["default"].connect()];
+                    case 1:
+                        conn = _a.sent();
+                        return [4 /*yield*/, conn.query(deleteSql)];
+                    case 2:
+                        result = _a.sent();
+                        product = result.rows;
+                        conn.release();
+                        return [2 /*return*/, product];
+                    case 3:
+                        err_4 = _a.sent();
+                        throw new Error("Could not delete all products.  " + err_4);
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    StoreProduct.prototype.getNewlyInsertedProductId = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var sql, conn, result, product, err_5;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        sql = "SELECT CURRVAL(pg_get_serial_sequence('id')) ";
+                        return [4 /*yield*/, database_1["default"].connect()];
+                    case 1:
+                        conn = _a.sent();
+                        return [4 /*yield*/, conn.query(sql)];
+                    case 2:
+                        result = _a.sent();
+                        product = result.rows;
+                        conn.release();
+                        return [2 /*return*/, product[0]];
+                    case 3:
+                        err_5 = _a.sent();
+                        throw new Error("Could not get newly inserted Product. " + err_5);
                     case 4: return [2 /*return*/];
                 }
             });

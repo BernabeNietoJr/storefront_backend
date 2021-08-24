@@ -39,37 +39,69 @@ exports.__esModule = true;
 var product_1 = require("../models/product");
 var productStore = new product_1.StoreProduct();
 var index = function (_req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var product;
+    var product, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, productStore.index()];
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, productStore.index()];
             case 1:
                 product = _a.sent();
                 res.json(product);
-                return [2 /*return*/];
+                return [3 /*break*/, 3];
+            case 2:
+                err_1 = _a.sent();
+                res.status(400).json(err_1);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
 }); };
 var show = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var product;
+    var product, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, productStore.show(req.body.id)];
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, productStore.show(req.body.id)];
             case 1:
                 product = _a.sent();
                 res.json(product);
-                return [2 /*return*/];
+                return [3 /*break*/, 3];
+            case 2:
+                err_2 = _a.sent();
+                res.status(400).json(err_2);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+var newid = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, err_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, productStore.getNewlyInsertedProductId()];
+            case 1:
+                id = _a.sent();
+                res.json(id);
+                return [3 /*break*/, 3];
+            case 2:
+                err_3 = _a.sent();
+                res.status(400).json(err_3);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
 }); };
 var create = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var product, newProduct, err_1;
+    var product, newProduct, err_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
                 product = {
-                    id: req.body.id,
                     name: req.body.name,
                     price: req.body.price,
                     category: req.body.category
@@ -80,16 +112,18 @@ var create = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                 res.json(newProduct);
                 return [3 /*break*/, 3];
             case 2:
-                err_1 = _a.sent();
-                res.status(400).json(err_1);
+                err_4 = _a.sent();
+                res.status(400);
+                res.json(err_4);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); };
-var prod_routes = function (app) {
+var product_routes = function (app) {
     app.get('/products', index);
     app.get('/product/:id', show);
-    app.post('/products', create);
+    app.post('/product', create);
+    app.get('/newid', newid);
 };
-exports["default"] = prod_routes;
+exports["default"] = product_routes;
