@@ -58,12 +58,13 @@ var index = function (_req, res) { return __awaiter(void 0, void 0, void 0, func
     });
 }); };
 var show = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var product, err_2;
+    var prod_id, product, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, productStore.show(req.body.id)];
+                prod_id = Number(req.body.id);
+                return [4 /*yield*/, productStore.show(prod_id)];
             case 1:
                 product = _a.sent();
                 res.json(product);

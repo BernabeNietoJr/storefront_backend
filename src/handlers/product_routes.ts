@@ -17,7 +17,8 @@ const index = async (_req: Request, res: Response) => {
 const show = async (req: Request, res: Response) => {
     try {
         
-        const product = await productStore.show(req.body.id)
+        const prod_id: Number = Number(req.body.id)
+        const product = await productStore.show(prod_id)
         res.json(product)
 
     }
