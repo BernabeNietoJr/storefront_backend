@@ -42,10 +42,9 @@ exports.__esModule = true;
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var user_1 = require("../models/user");
 var dotenv_1 = __importDefault(require("dotenv"));
-var verifyAuthToken_1 = __importDefault(require("./verifyAuthToken"));
 dotenv_1["default"].config();
-var TOKEN_SECRET = process.env.TOKEN_SECRET;
-var Token = TOKEN_SECRET || '';
+//const { TOKEN_SECRET } = process.env
+var Token = process.env.TOKEN_SECRET || '';
 var storeUser = new user_1.StoreUser();
 var index = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var user;
@@ -60,19 +59,26 @@ var index = function (req, res) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 var show = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user;
+    var user, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, storeUser.show(req.body.id)];
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, storeUser.show(Number(req.body.id))];
             case 1:
                 user = _a.sent();
                 res.json(user);
-                return [2 /*return*/];
+                return [3 /*break*/, 3];
+            case 2:
+                err_1 = _a.sent();
+                res.status(400).json(err_1);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
 }); };
 var create = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, newUser, token, err_1;
+    var user, newUser, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -83,28 +89,30 @@ var create = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, storeUser.create(user)];
+                return [4 /*yield*/, storeUser.create(user)
+                    //var token = jwt.sign({user: newUser}, Token)
+                ];
             case 2:
                 newUser = _a.sent();
-                token = jsonwebtoken_1["default"].sign({ user: newUser }, Token);
-                res.json(token);
+                //var token = jwt.sign({user: newUser}, Token)
+                res.json(newUser);
                 return [3 /*break*/, 4];
             case 3:
-                err_1 = _a.sent();
-                res.status(400).json(err_1);
+                err_2 = _a.sent();
+                res.status(400).json(err_2);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); };
 var authenticate = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, u, token, err_2;
+    var user, u, token, err_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 user = {
-                    user_name: req.body.user,
-                    password_digest: req.body.password_digest
+                    user_name: req.body.username,
+                    password_digest: req.body.password
                 };
                 _a.label = 1;
             case 1:
@@ -116,16 +124,17 @@ var authenticate = function (req, res) { return __awaiter(void 0, void 0, void 0
                 res.json(token);
                 return [3 /*break*/, 4];
             case 3:
-                err_2 = _a.sent();
-                res.status(401).json({ err: err_2 });
+                err_3 = _a.sent();
+                res.status(401).json({ err: err_3 });
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); };
 var user_routes = function (app) {
-    app.get('/users', verifyAuthToken_1["default"], index);
-    app.get('/user/:id', verifyAuthToken_1["default"], show);
+    app.get('/users', index);
+    app.get('/user/:id', show);
+    app.post('/user/authenticate', authenticate);
     app.post('/user', create);
 };
 exports["default"] = user_routes;

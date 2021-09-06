@@ -5,6 +5,7 @@ const productStore = new StoreProduct()
 
 const index = async (_req: Request, res: Response) => {
     try { 
+        
         const product = await productStore.index()
         res.json(product)
     }
@@ -15,8 +16,10 @@ const index = async (_req: Request, res: Response) => {
 
 const show = async (req: Request, res: Response) => {
     try {
+        
         const product = await productStore.show(req.body.id)
         res.json(product)
+
     }
     catch (err) {
         res.status(400).json(err)

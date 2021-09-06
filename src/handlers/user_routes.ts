@@ -6,9 +6,9 @@ import verifyAuthToken from './verifyAuthToken'
 
 dotenv.config();
 
-const { TOKEN_SECRET } = process.env
+//const { TOKEN_SECRET } = process.env
 
-const Token =  TOKEN_SECRET || ''
+const Token =  process.env.TOKEN_SECRET || ''
 
 const storeUser = new StoreUser()
 
@@ -19,8 +19,16 @@ const index = async (req: Request, res: Response) => {
 
 
 const show = async (req: Request, res: Response) => {
-    const user: User = await storeUser.show(req.body.id)
-    res.json(user)
+    
+    try {
+
+        const user: User = await storeUser.show(Number(req.body.id))
+        res.json(user)
+
+    } catch (err) {
+        res.status(400).json(err)
+    }
+    
 }
 
 const create = async (req: Request, res: Response) => {
@@ -39,8 +47,8 @@ const create = async (req: Request, res: Response) => {
 
     try {
         const newUser = await storeUser.create(user)
-        var token = jwt.sign({user: newUser}, Token)
-        res.json(token)
+        //var token = jwt.sign({user: newUser}, Token)
+        res.json(newUser)
     }
     catch (err) {
         res.status(400).json(err)
@@ -49,8 +57,8 @@ const create = async (req: Request, res: Response) => {
 
 const authenticate = async (req: Request, res: Response) => {
     const user: User = {
-        user_name: req.body.user,
-        password_digest: req.body.password_digest,
+        user_name: req.body.username,
+        password_digest: req.body.password,
     }
 
     try{
@@ -65,10 +73,12 @@ const authenticate = async (req: Request, res: Response) => {
 
 
 const user_routes = (app: express.Application) => {
-    app.get('/users', verifyAuthToken, index)
-    app.get('/user/:id', verifyAuthToken, show)
+    app.get('/users', index)
+    app.get('/user/:id', show)
+    app.post('/user/authenticate', authenticate)
     app.post('/user', create)
 }
+
 
 export default user_routes
 

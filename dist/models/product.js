@@ -82,7 +82,6 @@ var StoreProduct = /** @class */ (function () {
                         return [4 /*yield*/, conn.query(sql, [id])];
                     case 2:
                         result = _a.sent();
-                        conn.release();
                         return [2 /*return*/, result.rows[0]];
                     case 3:
                         err_2 = _a.sent();

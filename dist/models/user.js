@@ -59,7 +59,7 @@ var StoreUser = /** @class */ (function () {
                         return [4 /*yield*/, database_1["default"].connect()];
                     case 1:
                         conn = _a.sent();
-                        sql = 'SELECT * FROM users';
+                        sql = 'SELECT * FROM store_users';
                         return [4 /*yield*/, conn.query(sql)];
                     case 2:
                         result = _a.sent();
@@ -80,7 +80,7 @@ var StoreUser = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        sql = 'SELECT * FROM users WHERE id =($1)';
+                        sql = 'SELECT * FROM store_users WHERE id =($1)';
                         return [4 /*yield*/, database_1["default"].connect()];
                     case 1:
                         conn = _a.sent();
@@ -104,7 +104,7 @@ var StoreUser = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        sql = 'INSERT INTO users ( user_name, password_digest ) VALUES($1, $2, $3) RETURNING *';
+                        sql = 'INSERT INTO store_users ( user_name, password_digest ) VALUES($1, $2) RETURNING *';
                         return [4 /*yield*/, database_1["default"].connect()];
                     case 1:
                         conn = _a.sent();
@@ -125,25 +125,60 @@ var StoreUser = /** @class */ (function () {
     };
     StoreUser.prototype.authenticateUser = function (username, password) {
         return __awaiter(this, void 0, void 0, function () {
-            var conn, sql, result, user;
+            var conn, sql, user, result, user_1, err_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, database_1["default"].connect()];
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        return [4 /*yield*/, database_1["default"].connect()];
                     case 1:
                         conn = _a.sent();
-                        sql = 'SELECT password_digest FROM users WHERE username=($1)';
+                        sql = 'SELECT password_digest FROM users WHERE user_name=($1)';
+                        user = {
+                            user_name: username,
+                            password_digest: password
+                        };
                         return [4 /*yield*/, conn.query(sql, [username])];
                     case 2:
                         result = _a.sent();
                         console.log(password + BCRYPT_PASSWORD);
                         if (result.rows.length) {
-                            user = result.rows[0];
-                            console.log(user);
-                            if (bcrypt_1["default"].compareSync(password + BCRYPT_PASSWORD, user.password_digest)) {
-                                return [2 /*return*/, user];
+                            user_1 = result.rows[0];
+                            console.log(user_1);
+                            if (bcrypt_1["default"].compareSync(password + BCRYPT_PASSWORD, user_1.password_digest)) {
+                                return [2 /*return*/, user_1];
                             }
                         }
                         return [2 /*return*/, null];
+                    case 3:
+                        err_4 = _a.sent();
+                        throw new Error("Unauthorize User " + err_4);
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    StoreUser.prototype.deleteAllUsers = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var deleteSql, conn, result, user, err_5;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        deleteSql = 'DELETE FROM store_users WHERE id > 0';
+                        return [4 /*yield*/, database_1["default"].connect()];
+                    case 1:
+                        conn = _a.sent();
+                        return [4 /*yield*/, conn.query(deleteSql)];
+                    case 2:
+                        result = _a.sent();
+                        user = result.rows;
+                        conn.release();
+                        return [2 /*return*/, user];
+                    case 3:
+                        err_5 = _a.sent();
+                        throw new Error("Could not delete all user.  " + err_5);
+                    case 4: return [2 /*return*/];
                 }
             });
         });

@@ -1,15 +1,24 @@
 import { Product, StoreProduct } from "../product"
+import bcrypt from 'bcrypt';
+import dotenv from 'dotenv';
+import supertest, { Request } from 'supertest';
+
+dotenv.config();
+
+const { BCRYPT_PASSWORD, SALT_ROUNDS } = process.env;
+const saltRounds = SALT_ROUNDS || '';
 
 const productStore = new StoreProduct()
 
+
 describe('PRODUCT Model', () => {
 
-    let current_id: Number | unknown;
-    let product_justInserted : Product;
+    let current_id: Number | undefined;
+    let product_justInserted: Product;
 
     //need to run this before all test so that
     //show and index method will not fail test
-    beforeAll( async () => {
+    beforeAll(async () => {
         const result = await productStore.create({
             //id: 'DEFAULT',
             name: 'Soy Sauce',
@@ -17,15 +26,14 @@ describe('PRODUCT Model', () => {
             category: 'Condiment'
         });
 
-        //current_id = productStore.
         product_justInserted = result;
-        current_id =  productStore.getNewlyInsertedProductId; //result.id 
+        current_id = result.id //productStore.getNewlyInsertedProductId; //result.id 
     });
 
-    afterAll( async () => {
-         await productStore.deleteAll();
+    afterAll(async () => {
+        await productStore.deleteAll();
     });
-    
+
     it('should have a product index method', () => {
         expect(productStore.index).toBeDefined();
     });
@@ -35,16 +43,15 @@ describe('PRODUCT Model', () => {
     });
 
     it('create method should add a product', async () => {
-        // const result = await productStore.create({
-        //     //id: 'DEFAULT',
-        //     name: 'Soy Sauce',
-        //     price: 1.75,
-        //     category: 'Condiment'
-        // });
-
-        //current_id = result.id;
-
-        expect(current_id).toEqual(product_justInserted.id);
+        
+        const prod: Product = {
+            id: current_id,
+            name: 'Soy Sauce',
+            price: 1.75,
+            category: 'Condiment'
+        } 
+        //expect(current_id).toEqual(product_justInserted.id);
+        expect(prod).toEqual(product_justInserted);
     });
 
     it('index method should return a list of products', async () => {
@@ -52,10 +59,10 @@ describe('PRODUCT Model', () => {
         const result = await productStore.index();
         expect(result.length).toBeGreaterThan(0);
 
-      });
+    });
 
 
-      it('show method should return the correct product', async () => {
+    it('show method should return the correct product', async () => {
         const result = await productStore.show(Number(current_id));
         expect(result).toEqual({
             id: Number(current_id),
@@ -63,7 +70,16 @@ describe('PRODUCT Model', () => {
             price: 1.75,
             category: 'Condiment'
         });
-      });
+    });
 
-      
+
 });
+
+// describe('Product routes Endpoint', () => {
+
+//     it('post create product', async done => {
+//         //const await Request.post('/product', create)
+//     });
+
+// });
+

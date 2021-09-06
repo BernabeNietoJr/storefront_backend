@@ -36,9 +36,9 @@ export class StoreProduct {
             const conn = await client.connect();
             const result = await conn.query(sql, [id]);
 
-            conn.release();
-
             return result.rows[0];
+
+            conn.release();
         
         }catch (err) {
             throw new Error(`Could not find book ${id}. Error: ${err}`);

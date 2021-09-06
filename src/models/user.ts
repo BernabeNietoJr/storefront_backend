@@ -21,7 +21,7 @@ export class StoreUser {
         try {
 
             const conn = await client.connect();
-            const sql = 'SELECT * FROM users';
+            const sql = 'SELECT * FROM store_users';
             const result = await  conn.query(sql);
 
             conn.release();
@@ -35,10 +35,10 @@ export class StoreUser {
     }
 
 
-    async show(id: string): Promise<User> {
+    async show(id: Number): Promise<User> {
 
         try {
-            const sql = 'SELECT * FROM users WHERE id =($1)';
+            const sql = 'SELECT * FROM store_users WHERE id =($1)';
 
             const conn = await client.connect();
             const result = await conn.query(sql, [id]);
@@ -52,12 +52,13 @@ export class StoreUser {
         }
 
     }
+    
 
 
     async create(user: User): Promise<User> {
         try {
             
-            const sql = 'INSERT INTO users ( user_name, password_digest ) VALUES($1, $2, $3) RETURNING *';
+            const sql = 'INSERT INTO store_users ( user_name, password_digest ) VALUES($1, $2) RETURNING *';
 
             const conn = await client.connect();
 
@@ -81,25 +82,59 @@ export class StoreUser {
 
     async authenticateUser(username: string, password: string): Promise<User | null> {
 
-        const conn = await client.connect();
-        const sql = 'SELECT password_digest FROM users WHERE username=($1)';
+        try {
+
+            const conn = await client.connect();
+            const sql = 'SELECT password_digest FROM users WHERE user_name=($1)';
+            const user: User = {
+                user_name: username,
+                password_digest: password
+            } 
+            
+            const result = await conn.query(sql, [username]);
+        
+            console.log(password+BCRYPT_PASSWORD);
     
-        const result = await conn.query(sql, [username]);
+            if(result.rows.length) {
     
-        console.log(password+BCRYPT_PASSWORD);
+                const user = result.rows[0];
     
-        if(result.rows.length) {
+                console.log(user);
     
-          const user = result.rows[0];
-    
-          console.log(user);
-    
-          if (bcrypt.compareSync(password+BCRYPT_PASSWORD, user.password_digest)) {
-            return user;
-          }
+                if (bcrypt.compareSync(password+BCRYPT_PASSWORD, user.password_digest)) {
+                    return user;
+                }
+            }
+
+            return null;
+
+        }catch (err){
+          throw new Error(`Unauthorize User ${err}`);
         }
-    
-        return null;
+        
     }
+
+    async deleteAllUsers(): Promise<User[]> {
+
+        try {
+            const deleteSql = 'DELETE FROM store_users WHERE id > 0';
+
+            const conn = await client.connect();
+
+            const result = await conn.query(deleteSql);
+
+            const user = result.rows;
+
+            conn.release();
+
+            return user;
+
+        }
+        catch (err) {
+            throw new Error(`Could not delete all user.  ${err}`);
+        }
+        
+    }  
+
 
 }
