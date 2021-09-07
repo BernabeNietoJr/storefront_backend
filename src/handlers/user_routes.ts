@@ -13,8 +13,16 @@ const Token =  process.env.TOKEN_SECRET || ''
 const storeUser = new StoreUser()
 
 const index = async (req: Request, res: Response) => {
-    const user = await storeUser.index()
-    res.json(user)
+    
+    try {
+
+        const user = await storeUser.index()
+        res.json(user)
+
+    }catch(err){
+        res.status(400).json(err)
+    }
+    
 }
 
 
@@ -22,7 +30,7 @@ const show = async (req: Request, res: Response) => {
     
     try {
 
-        const user: User = await storeUser.show(Number(req.body.id))
+        const user: User = await storeUser.show(Number(req.params.id))
         res.json(user)
 
     } catch (err) {
@@ -57,14 +65,16 @@ const create = async (req: Request, res: Response) => {
 
 const authenticate = async (req: Request, res: Response) => {
     const user: User = {
-        user_name: req.body.username,
-        password_digest: req.body.password,
+        user_name: req.body.user_name,
+        password_digest: req.body.password_digest,
     }
 
     try{
-        const u = await storeUser.authenticateUser(user.user_name, user.password_digest)
-        var token = jwt.sign({user: u}, Token)
-        res.json(token)
+        const u = await storeUser.authenticateUser(user)
+        //var token = jwt.sign({user: u}, Token)
+        //res.json(token)
+        //console.log(u)
+        res.json(u)
     }
     catch (err) {
         res.status(401).json({err})

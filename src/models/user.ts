@@ -7,6 +7,7 @@ dotenv.config();
 const { BCRYPT_PASSWORD, SALT_ROUNDS } =   process.env;
 
 const saltRounds  = SALT_ROUNDS || '';
+const pepper = BCRYPT_PASSWORD || '';
 
 export type User = {
     id ?: Number;
@@ -62,10 +63,12 @@ export class StoreUser {
 
             const conn = await client.connect();
 
-            const hash = bcrypt.hashSync(
-                user.password_digest + BCRYPT_PASSWORD,
-                parseInt(saltRounds)
-            );
+            // const hash: string = bcrypt.hashSync(
+            //     user.password_digest + BCRYPT_PASSWORD,
+            //     parseInt(saltRounds)
+            // );
+
+            const hash = this.createHash(user.password_digest, pepper, parseInt(saltRounds))
 
             const result = await conn.query(sql, [user.user_name, hash]);
 
@@ -80,20 +83,23 @@ export class StoreUser {
         }
     }
 
-    async authenticateUser(username: string, password: string): Promise<User | null> {
+    async authenticateUser(userLoggIn: User): Promise<User | null> {
 
         try {
 
+
+
             const conn = await client.connect();
-            const sql = 'SELECT password_digest FROM users WHERE user_name=($1)';
-            const user: User = {
-                user_name: username,
-                password_digest: password
-            } 
+            const sql = 'SELECT * FROM store_users WHERE user_name=($1)';
+
+            // const user: User = {
+            //     user_name: username,
+            //     password_digest: password
+            // } 
             
-            const result = await conn.query(sql, [username]);
+            const result = await conn.query(sql, [userLoggIn.user_name]);
         
-            console.log(password+BCRYPT_PASSWORD);
+            console.log(userLoggIn.password_digest+pepper);
     
             if(result.rows.length) {
     
@@ -101,7 +107,7 @@ export class StoreUser {
     
                 console.log(user);
     
-                if (bcrypt.compareSync(password+BCRYPT_PASSWORD, user.password_digest)) {
+                if (this.comparePasswordHash(userLoggIn.password_digest, pepper, user.password_digest)) {
                     return user;
                 }
             }
@@ -117,6 +123,7 @@ export class StoreUser {
     async deleteAllUsers(): Promise<User[]> {
 
         try {
+
             const deleteSql = 'DELETE FROM store_users WHERE id > 0';
 
             const conn = await client.connect();
@@ -135,6 +142,31 @@ export class StoreUser {
         }
         
     }  
+
+     createHash(password: string, tok_secret: string, saltSize: number): string {
+        
+        try {
+
+            const hash: string = bcrypt.hashSync(
+                password + tok_secret,
+                saltSize
+            );
+
+            return hash
+            
+        } catch (err) {
+            throw new Error(`Could not create a hash. ${err}`)
+        }
+
+    }
+
+    comparePasswordHash( password: string, pepper: string, pword_digest: string): boolean {
+
+        if (bcrypt.compareSync(password+pepper, pword_digest)) 
+            return true
+        else
+            return false
+    }
 
 
 }

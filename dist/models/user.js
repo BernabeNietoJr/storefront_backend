@@ -46,6 +46,7 @@ var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1["default"].config();
 var _a = process.env, BCRYPT_PASSWORD = _a.BCRYPT_PASSWORD, SALT_ROUNDS = _a.SALT_ROUNDS;
 var saltRounds = SALT_ROUNDS || '';
+var pepper = BCRYPT_PASSWORD || '';
 var StoreUser = /** @class */ (function () {
     function StoreUser() {
     }
@@ -108,7 +109,7 @@ var StoreUser = /** @class */ (function () {
                         return [4 /*yield*/, database_1["default"].connect()];
                     case 1:
                         conn = _a.sent();
-                        hash = bcrypt_1["default"].hashSync(user.password_digest + BCRYPT_PASSWORD, parseInt(saltRounds));
+                        hash = this.createHash(user.password_digest, pepper, parseInt(saltRounds));
                         return [4 /*yield*/, conn.query(sql, [user.user_name, hash])];
                     case 2:
                         result = _a.sent();
@@ -123,9 +124,9 @@ var StoreUser = /** @class */ (function () {
             });
         });
     };
-    StoreUser.prototype.authenticateUser = function (username, password) {
+    StoreUser.prototype.authenticateUser = function (userLoggIn) {
         return __awaiter(this, void 0, void 0, function () {
-            var conn, sql, user, result, user_1, err_4;
+            var conn, sql, result, user, err_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -133,20 +134,16 @@ var StoreUser = /** @class */ (function () {
                         return [4 /*yield*/, database_1["default"].connect()];
                     case 1:
                         conn = _a.sent();
-                        sql = 'SELECT password_digest FROM users WHERE user_name=($1)';
-                        user = {
-                            user_name: username,
-                            password_digest: password
-                        };
-                        return [4 /*yield*/, conn.query(sql, [username])];
+                        sql = 'SELECT * FROM store_users WHERE user_name=($1)';
+                        return [4 /*yield*/, conn.query(sql, [userLoggIn.user_name])];
                     case 2:
                         result = _a.sent();
-                        console.log(password + BCRYPT_PASSWORD);
+                        console.log(userLoggIn.password_digest + pepper);
                         if (result.rows.length) {
-                            user_1 = result.rows[0];
-                            console.log(user_1);
-                            if (bcrypt_1["default"].compareSync(password + BCRYPT_PASSWORD, user_1.password_digest)) {
-                                return [2 /*return*/, user_1];
+                            user = result.rows[0];
+                            console.log(user);
+                            if (this.comparePasswordHash(userLoggIn.password_digest, pepper, user.password_digest)) {
+                                return [2 /*return*/, user];
                             }
                         }
                         return [2 /*return*/, null];
@@ -182,6 +179,21 @@ var StoreUser = /** @class */ (function () {
                 }
             });
         });
+    };
+    StoreUser.prototype.createHash = function (password, tok_secret, saltSize) {
+        try {
+            var hash = bcrypt_1["default"].hashSync(password + tok_secret, saltSize);
+            return hash;
+        }
+        catch (err) {
+            throw new Error("Could not create a hash. " + err);
+        }
+    };
+    StoreUser.prototype.comparePasswordHash = function (password, pepper, pword_digest) {
+        if (bcrypt_1["default"].compareSync(password + pepper, pword_digest))
+            return true;
+        else
+            return false;
     };
     return StoreUser;
 }());

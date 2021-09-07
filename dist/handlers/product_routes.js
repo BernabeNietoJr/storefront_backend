@@ -63,7 +63,7 @@ var show = function (req, res) { return __awaiter(void 0, void 0, void 0, functi
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                prod_id = Number(req.body.id);
+                prod_id = Number(req.params.id);
                 return [4 /*yield*/, productStore.show(prod_id)];
             case 1:
                 product = _a.sent();

@@ -39,7 +39,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var user_1 = require("../models/user");
 var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1["default"].config();
@@ -47,24 +46,12 @@ dotenv_1["default"].config();
 var Token = process.env.TOKEN_SECRET || '';
 var storeUser = new user_1.StoreUser();
 var index = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, storeUser.index()];
-            case 1:
-                user = _a.sent();
-                res.json(user);
-                return [2 /*return*/];
-        }
-    });
-}); };
-var show = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var user, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, storeUser.show(Number(req.body.id))];
+                return [4 /*yield*/, storeUser.index()];
             case 1:
                 user = _a.sent();
                 res.json(user);
@@ -77,8 +64,27 @@ var show = function (req, res) { return __awaiter(void 0, void 0, void 0, functi
         }
     });
 }); };
+var show = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, err_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, storeUser.show(Number(req.params.id))];
+            case 1:
+                user = _a.sent();
+                res.json(user);
+                return [3 /*break*/, 3];
+            case 2:
+                err_2 = _a.sent();
+                res.status(400).json(err_2);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
 var create = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, newUser, err_2;
+    var user, newUser, err_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -98,34 +104,40 @@ var create = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                 res.json(newUser);
                 return [3 /*break*/, 4];
             case 3:
-                err_2 = _a.sent();
-                res.status(400).json(err_2);
+                err_3 = _a.sent();
+                res.status(400).json(err_3);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); };
 var authenticate = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, u, token, err_3;
+    var user, u, err_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 user = {
-                    user_name: req.body.username,
-                    password_digest: req.body.password
+                    user_name: req.body.user_name,
+                    password_digest: req.body.password_digest
                 };
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, storeUser.authenticateUser(user.user_name, user.password_digest)];
+                return [4 /*yield*/, storeUser.authenticateUser(user)
+                    //var token = jwt.sign({user: u}, Token)
+                    //res.json(token)
+                    //console.log(u)
+                ];
             case 2:
                 u = _a.sent();
-                token = jsonwebtoken_1["default"].sign({ user: u }, Token);
-                res.json(token);
+                //var token = jwt.sign({user: u}, Token)
+                //res.json(token)
+                //console.log(u)
+                res.json(u);
                 return [3 /*break*/, 4];
             case 3:
-                err_3 = _a.sent();
-                res.status(401).json({ err: err_3 });
+                err_4 = _a.sent();
+                res.status(401).json({ err: err_4 });
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }

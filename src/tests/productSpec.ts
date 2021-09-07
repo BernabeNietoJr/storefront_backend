@@ -1,7 +1,7 @@
-import { Product, StoreProduct } from "../product"
+import { Product, StoreProduct } from "../models/product"
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
-import supertest, { Request } from 'supertest';
+
 
 dotenv.config();
 
