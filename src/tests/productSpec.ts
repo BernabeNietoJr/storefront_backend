@@ -75,11 +75,4 @@ describe('PRODUCT Model', () => {
 
 });
 
-// describe('Product routes Endpoint', () => {
-
-//     it('post create product', async done => {
-//         //const await Request.post('/product', create)
-//     });
-
-// });
 
