@@ -8,7 +8,7 @@ describe('Product routes Endpoint', () => {
     it('post create product', async done => {
         
         const response =  await request.post('/product');
-        expect(response.status).toBe(200);
+        expect(response.status).toBe(401);
         done();
 
     });
@@ -44,7 +44,7 @@ describe('Users routes Endpoint', () => {
     it('get index users', async (done) => {
 
         const resp = await request.get('/users'); 
-        expect(resp.status).toBe(200);
+        expect(resp.status).toBe(401);
         done();
 
     });
@@ -52,7 +52,7 @@ describe('Users routes Endpoint', () => {
     it('get show user', async (done) => {
 
         const resp = await request.get('/user/45'); 
-        expect(resp.status).toBe(200);
+        expect(resp.status).toBe(401);
         done();
         
     });
@@ -60,7 +60,7 @@ describe('Users routes Endpoint', () => {
     it('post authenticate user', async done => {
         
         const response =  await request.post('/user/authenticate');
-        expect(response.status).toBe(200);
+        expect(response.status).toBe(401);
         done();
 
     });

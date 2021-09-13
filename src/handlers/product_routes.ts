@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express'
+import verifyAuthToken from '../middleware/verifyAuthToken'
 import { Product, StoreProduct } from '../models/product'
 
 const productStore = new StoreProduct()
@@ -27,15 +28,6 @@ const show = async (req: Request, res: Response) => {
     }
 }
 
-const newid = async (req: Request, res: Response) => {
-    try {
-        const id = await productStore.getNewlyInsertedProductId()
-        res.json(id)
-    }
-    catch (err) {
-        res.status(400).json(err)
-    }
-}
 
 const create = async (req: Request, res: Response) => {
     
@@ -56,10 +48,11 @@ const create = async (req: Request, res: Response) => {
 }
 
 const product_routes = (app: express.Application) => {
+
     app.get('/products', index)
     app.get('/product/:id', show)
-    app.post('/product', create)
-    app.get('/newid', newid)
+    app.post('/product', verifyAuthToken, create)
+
 }
 
 export default product_routes

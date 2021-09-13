@@ -39,8 +39,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
+var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var user_1 = require("../models/user");
 var dotenv_1 = __importDefault(require("dotenv"));
+var verifyAuthToken_1 = __importDefault(require("../middleware/verifyAuthToken"));
 dotenv_1["default"].config();
 //const { TOKEN_SECRET } = process.env
 var Token = process.env.TOKEN_SECRET || '';
@@ -84,7 +86,7 @@ var show = function (req, res) { return __awaiter(void 0, void 0, void 0, functi
     });
 }); };
 var create = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, newUser, err_3;
+    var user, newUser, token, err_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -95,13 +97,11 @@ var create = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, storeUser.create(user)
-                    //var token = jwt.sign({user: newUser}, Token)
-                ];
+                return [4 /*yield*/, storeUser.create(user)];
             case 2:
                 newUser = _a.sent();
-                //var token = jwt.sign({user: newUser}, Token)
-                res.json(newUser);
+                token = jsonwebtoken_1["default"].sign({ user: newUser }, Token);
+                res.json(token);
                 return [3 /*break*/, 4];
             case 3:
                 err_3 = _a.sent();
@@ -112,7 +112,7 @@ var create = function (req, res) { return __awaiter(void 0, void 0, void 0, func
     });
 }); };
 var authenticate = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, u, err_4;
+    var user, u, token, err_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -124,16 +124,12 @@ var authenticate = function (req, res) { return __awaiter(void 0, void 0, void 0
             case 1:
                 _a.trys.push([1, 3, , 4]);
                 return [4 /*yield*/, storeUser.authenticateUser(user)
-                    //var token = jwt.sign({user: u}, Token)
-                    //res.json(token)
-                    //console.log(u)
+                    //added for verifying token
                 ];
             case 2:
                 u = _a.sent();
-                //var token = jwt.sign({user: u}, Token)
-                //res.json(token)
-                //console.log(u)
-                res.json(u);
+                token = jsonwebtoken_1["default"].sign({ user: u }, Token);
+                res.json(token);
                 return [3 /*break*/, 4];
             case 3:
                 err_4 = _a.sent();
@@ -144,9 +140,9 @@ var authenticate = function (req, res) { return __awaiter(void 0, void 0, void 0
     });
 }); };
 var user_routes = function (app) {
-    app.get('/users', index);
-    app.get('/user/:id', show);
-    app.post('/user/authenticate', authenticate);
+    app.get('/users', verifyAuthToken_1["default"], index);
+    app.get('/user/:id', verifyAuthToken_1["default"], show);
+    app.post('/user/authenticate', verifyAuthToken_1["default"], authenticate);
     app.post('/user', create);
 };
 exports["default"] = user_routes;

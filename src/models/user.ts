@@ -87,8 +87,6 @@ export class StoreUser {
 
         try {
 
-
-
             const conn = await client.connect();
             const sql = 'SELECT * FROM store_users WHERE user_name=($1)';
 

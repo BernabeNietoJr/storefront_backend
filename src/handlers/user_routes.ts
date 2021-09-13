@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express'
 import jwt, { Secret } from 'jsonwebtoken'
 import { User, StoreUser } from '../models/user'
 import dotenv from 'dotenv'
-import verifyAuthToken from './verifyAuthToken'
+import  verifyAuthToken from '../middleware/verifyAuthToken'
 
 dotenv.config();
 
@@ -50,13 +50,14 @@ const create = async (req: Request, res: Response) => {
     //     jwt.verify(req.body.token, Token)
     // }
     // catch(err) {
-    //     res.status(401)
+    //     res.status(401).json(`Invalid Token ${err}`)
+    //     return
     // }
 
     try {
         const newUser = await storeUser.create(user)
-        //var token = jwt.sign({user: newUser}, Token)
-        res.json(newUser)
+        var token = jwt.sign({user: newUser}, Token)
+        res.json(token)
     }
     catch (err) {
         res.status(400).json(err)
@@ -64,6 +65,7 @@ const create = async (req: Request, res: Response) => {
 }
 
 const authenticate = async (req: Request, res: Response) => {
+    
     const user: User = {
         user_name: req.body.user_name,
         password_digest: req.body.password_digest,
@@ -71,10 +73,10 @@ const authenticate = async (req: Request, res: Response) => {
 
     try{
         const u = await storeUser.authenticateUser(user)
-        //var token = jwt.sign({user: u}, Token)
-        //res.json(token)
-        //console.log(u)
-        res.json(u)
+        //added for verifying token
+        var token = jwt.sign({user: u}, Token)
+        res.json(token)
+        //res.json(u)
     }
     catch (err) {
         res.status(401).json({err})
@@ -83,12 +85,14 @@ const authenticate = async (req: Request, res: Response) => {
 
 
 const user_routes = (app: express.Application) => {
-    app.get('/users', index)
-    app.get('/user/:id', show)
-    app.post('/user/authenticate', authenticate)
+    app.get('/users', verifyAuthToken, index)
+    app.get('/user/:id', verifyAuthToken, show)
+    app.post('/user/authenticate', verifyAuthToken, authenticate)
     app.post('/user', create)
 }
 
 
 export default user_routes
+
+
 

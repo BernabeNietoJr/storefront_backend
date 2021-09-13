@@ -1,23 +1,24 @@
 import client from "../database";
 
 export type Order = {
-    id ?: Number;
-    product_id: Number;
+    id ?: number;
+    product_id ? : number;
     quantity: Number;
-    user_id: Number;
-    status: string;
+    user_id: number;
+    status ?: string;
 }
 
 export class StoreOrder {
 
     async create(order: Order): Promise<Order> {
+
         try {
             
-            const sql = 'INSERT INTO orders ( prod_id, quantity, user_id) VALUES($1, $2, $3) RETURNING *';
+            const sql = 'INSERT INTO orders ( status, quantity, user_id ) VALUES($1, $2, $3) RETURNING *';
 
             const conn = await client.connect();
 
-            const result = await conn.query(sql, [order.product_id, order.quantity, order.user_id]);
+            const result = await conn.query(sql, [order.status, order.quantity, order.user_id]);
 
             const product = result.rows[0];
 
@@ -26,8 +27,11 @@ export class StoreOrder {
             return product;
 
         } catch (err) {
+
             throw new Error(`Could not create new order ${order.product_id}. Error ${err}`);
+
         }
+
     }
 
 
@@ -92,6 +96,61 @@ export class StoreOrder {
         }
         
     }  
+
+    async addProduct(quantity: number, orderId: string, productId: string): Promise<Order> {
+        
+        try {
+
+        const orderStat: boolean =  await this.isOrderOpen(Number(orderId), Number(productId))
+
+          if (orderStat === false){
+            throw new Error(`Could not add proudct ${productId} to order ${orderId} because order status is close`)
+          }
+            
+
+          const sql = 'INSERT INTO order_products (quantity, order_id, product_id) VALUES($1, $2, $3) RETURNING *'
+          
+          const conn = await client.connect()
+    
+          const result = await conn
+              .query(sql, [quantity, orderId, productId])
+    
+          const order = result.rows[0]
+    
+
+          conn.release()
+    
+          return order
+
+        } catch (err) {
+          throw new Error(`Could not add product ${productId} to order ${orderId}: ${err}`)
+        }
+      }
+
+
+      async isOrderOpen(orderId: number, productId: number): Promise<boolean> {
+
+        try {
+
+            const ordersql = 'SELECT * FROM orders WHERE id=($1)'
+            
+            const conn = await client.connect()
+      
+            const result = await conn.query(ordersql, [orderId])
+      
+            const order = result.rows[0]
+
+            if (order.status === 'active' ||  order.status ==='Active')
+                return true
+            else
+                return false
+      
+
+          } catch (err) {
+            throw new Error(`${err}`)
+          }
+
+      }
 
 
 }
