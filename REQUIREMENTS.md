@@ -4,20 +4,25 @@ The company stakeholders want to create an online storefront to showcase their g
 These are the notes from a meeting with the frontend developer that describe what endpoints the API needs to supply, as well as data shapes the frontend and backend have agreed meet the requirements of the application. 
 
 ## API Endpoints
-#### Products
-- Index 
-- Show
-- Create [token required]
+
+#### Products - For development use http://localhost:3000 as your domain. Replace it with your actual domain in production.
+- Index - http://localhost:3000/products
+- Show - http://localhost:3000/product/id    where id is the id number of the product
+- Create [token required] - http://localhost:3000/product
 - [OPTIONAL] Top 5 most popular products 
 - [OPTIONAL] Products by category (args: product category)
 
 #### Users
-- Index [token required]
-- Show [token required]
-- Create N[token required]
+- Index [token required] - http://localhost:3000/users
+- Show [token required] - http://localhost:3000/user/id  where id is the id number of the user
+- Create [token required] - http://localhost:3000/user
+- Authenticate - http://localhost:3000/user/authenticate
 
 #### Orders
-- Current Order by user (args: user id)[token required]
+- Index [token required] - http://localhost:3000/orders
+- Show [token required] - http://localhost:3000/order/id where id is the order id
+- Create [token required] - http://localhost:3000/order
+-  AddProduct by user [token required] - http://localhost:3000/orders/id/product where id is the order id
 - [OPTIONAL] Completed Orders by user (args: user id)[token required]
 
 ## Data Shapes
@@ -29,13 +34,11 @@ These are the notes from a meeting with the frontend developer that describe wha
 
 #### User
 - id
-- firstName
-- lastName
-- password
+- password_digest
 
 #### Orders
 - id
-- id of each product in the order
+- productId
 - quantity of each product in the order
 - user_id
 - status of order (active or complete)
