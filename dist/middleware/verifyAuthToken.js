@@ -10,8 +10,6 @@ var TOKEN_SECRET = process.env.TOKEN_SECRET;
 var TokenSecret = TOKEN_SECRET || '';
 var verifyAuthToken = function (req, res, next) {
     try {
-        //let authHeader = req.headers.authorization || '5gtrertetg'
-        //const token = authHeader.split(' ')[1]
         var token = req.body.token;
         var decoded = jsonwebtoken_1["default"].verify(token, TokenSecret);
         next();

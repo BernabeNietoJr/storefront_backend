@@ -97,7 +97,7 @@ export class StoreOrder {
         
     }  
 
-    async addProduct(quantity: number, orderId: string, productId: string): Promise<Order> {
+    async addProduct(quantity: number, orderId: number, productId: number): Promise<Order> {
         
         try {
 

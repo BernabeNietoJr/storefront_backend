@@ -46,14 +46,6 @@ const create = async (req: Request, res: Response) => {
         password_digest: req.body.password_digest,
     }
 
-    // try {
-    //     jwt.verify(req.body.token, Token)
-    // }
-    // catch(err) {
-    //     res.status(401).json(`Invalid Token ${err}`)
-    //     return
-    // }
-
     try {
         const newUser = await storeUser.create(user)
         var token = jwt.sign({user: newUser}, Token)

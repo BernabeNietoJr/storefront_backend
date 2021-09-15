@@ -17,7 +17,6 @@ describe("Order Model", () => {
 
     beforeAll(async () => {
         const order = await productOrder.create({
-            //id: 'DEFAULT',
             status: 'active',
             quantity: 10,
             user_id: 5,
@@ -49,6 +48,7 @@ describe("Order Model", () => {
 
         const orders = await productOrder.index();
         expect(orders.length).toBeGreaterThanOrEqual(0);
+        
     })
 
 
@@ -67,6 +67,12 @@ describe("Order Model", () => {
         expect(orderToSHOW).toEqual(order);
     })
 
+
+    it('addProduct should add a product to order_products table', async () => {
+
+        const productToAddToOrder = await productOrder.addProduct(2, currentOrderId || 0, 1)
+
+    })
 
 
 })

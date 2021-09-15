@@ -12,8 +12,6 @@ const TokenSecret =  TOKEN_SECRET || ''
 
 const verifyAuthToken = (req: Request, res: Response, next: NextFunction) => {
     try {
-        //let authHeader = req.headers.authorization || '5gtrertetg'
-        //const token = authHeader.split(' ')[1]
         
         const token = req.body.token;
         

@@ -4,6 +4,30 @@
 
 This repo contains a basic Node and Express app to get you started in constructing an API. To get started, clone this repo and run `yarn` in your terminal at the project root.
 
+## Setup and Connect to the database
+
+- use npm or yarn to add all dependencies listed on package.json (Your a developer you should know how to... if not Googled it)
+- Create an PostgreSql db system on docker (if you don't know how visit this site: https://betterprogramming.pub/connect-from-local-machine-to-postgresql-docker-container-f785f00461a7)
+- the backend is running at port 3000 and the postgres is on port 5432
+- Create database store_db as the dev db and store_db_test as the test db
+- Run db-migrate up to create the table needed for the dev environment. Note make sure that the ENV=dev in  .env file for running in dev environment
+- To run unit test change ENV=test then type npm run test --silent
+
+
+## Environment variable on .env file are below
+POSTGRES_HOST=127.0.0.1
+POSTGRES_DB=store_db
+POSTGRES_TEST_DB=store_db_test
+POSTGRES_USER=store_user
+POSTGRES_PASSWORD=password123
+SALT_ROUNDS=10
+TOKEN_SECRET=ThEqUiCkBrOwNfOxJuMpOvErThElAzYdOg
+BCRYPT_PASSWORD=authen_tication&-123
+ENV=test
+
+
+
+
 ## Required Technologies
 Your application must make use of the following libraries:
 - Postgres for the database

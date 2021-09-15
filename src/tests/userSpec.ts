@@ -73,8 +73,7 @@ describe('USER Model', () => {
 
     it('authenticateUser should authenticate a user', async () => {
         
-        //const result = await storeUser.authenticateUser('user1', 'password123');
-
+        
         const user: User = {
             //id: newUserId,
             user_name: 'user1',

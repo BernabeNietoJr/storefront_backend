@@ -5,6 +5,7 @@ import { Product, StoreProduct } from '../models/product'
 const productStore = new StoreProduct()
 
 const index = async (_req: Request, res: Response) => {
+    
     try { 
         
         const product = await productStore.index()
@@ -18,7 +19,7 @@ const index = async (_req: Request, res: Response) => {
 const show = async (req: Request, res: Response) => {
     try {
         
-        const prod_id: Number = Number(req.params.id)
+        const prod_id: number = Number(req.params.id)
         const product = await productStore.show(prod_id)
         res.json(product)
 
@@ -27,6 +28,9 @@ const show = async (req: Request, res: Response) => {
         res.status(400).json(err)
     }
 }
+
+
+
 
 
 const create = async (req: Request, res: Response) => {
