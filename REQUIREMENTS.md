@@ -43,3 +43,66 @@ These are the notes from a meeting with the frontend developer that describe wha
 - user_id
 - status of order (active or complete)
 
+### Order_Products
+- id
+- quantity
+- order_id
+- product_id
+
+
+### Database Schema
+
+## Products Table
+
+                                     Table "public.products"
+  Column  |          Type          | Collation | Nullable |               Defaul
+t                
+----------+------------------------+-----------+----------+---------------------
+-----------------
+ id       | integer                |           | not null | nextval('products_id
+_seq'::regclass)
+ name     | character varying(100) |           |          | 
+ price    | real                   |           |          | 
+ category | character varying(100) |           |          | 
+Indexes:
+    "products_pkey" PRIMARY KEY, btree (id)
+
+
+## Store_Users Table
+
+                                        Table "public.store_users"
+     Column      |          Type          | Collation | Nullable |                 Default                 
+-----------------+------------------------+-----------+----------+-----------------------------------------
+ id              | integer                |           | not null | nextval('store_users_id_seq'::regclass)
+ user_name       | character varying(100) |           |          | 
+ password_digest | character varying(100) |           |          | 
+Indexes:
+    "store_users_pkey" PRIMARY KEY, btree (id)
+
+
+## Orders
+
+ Table "public.orders"
+  Column  |         Type          | Collation | Nullable |              Default               
+----------+-----------------------+-----------+----------+------------------------------------
+ id       | integer               |           | not null | nextval('orders_id_seq'::regclass)
+ status   | character varying(15) |           |          | 
+ quantity | integer               |           |          | 
+ user_id  | integer               |           |          | 
+Indexes:
+    "orders_pkey" PRIMARY KEY, btree (id)
+
+
+## Order_Products
+
+Table "public.order_products"
+   Column   |  Type   | Collation | Nullable |                  Default                   
+------------+---------+-----------+----------+--------------------------------------------
+ id         | integer |           | not null | nextval('order_products_id_seq'::regclass)
+ quantity   | integer |           |          | 
+ order_id   | integer |           |          | 
+ product_id | integer |           |          | 
+Indexes:
+    "order_products_pkey" PRIMARY KEY, btree (id)
+
+
